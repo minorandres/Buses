@@ -28,6 +28,10 @@
             android:name=".CalificarActivity"
             android:label="@string/title_activity_calificar" >
         </activity>
+        <activity
+            android:name=".ScreenSlidePagerActivity"
+            android:label="Imagenes" >
+        </activity>
     </application>
 
 </manifest>

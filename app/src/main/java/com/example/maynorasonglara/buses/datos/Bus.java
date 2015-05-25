@@ -1,15 +1,34 @@
 package com.example.maynorasonglara.buses.datos;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 /**
  * Created by maynor.a.song.lara on 2/12/2015.
  */
 public class Bus {
 
-    private float tarifa,id;
+    private float tarifa;
     private String nombre,tiempo,concesionario,precioAdultoMayor;
-    private int isFraccionamiento,isRamel;
+    private int isFraccionamiento,isRamel,id;
+    private ArrayList<Imagen> listaDeImagenes=new ArrayList<>();
 
-    public Bus(float tarifa, float id, String nombre, String tiempo, String concesionario, String precioAdultoMayor, int isFraccionamiento, int isRamel) {
+    /* variables estaticas de atributos de bus para que al viajar de una actividad a otra los datos se recojan de la misma manera sin problema*/
+    public static String NOMBRE_BUS="nombre";
+    public static String ID_BUS="id";
+    public static String TIEMPO_BUS="tiempo";
+    public static String CONCESIONARIO_BUS="concesionario";
+    public static String TARIFA_BUS="tarifa";
+    public static String ADULTO_MAYOR_BUS="precioAdultoMayor";
+
+
+
+    public Bus(float tarifa, int id, String nombre, String tiempo, String concesionario, String precioAdultoMayor, int isFraccionamiento, int isRamel) {
         this.tarifa = tarifa;
         this.id = id;
         this.nombre = nombre;
@@ -20,14 +39,32 @@ public class Bus {
         this.isRamel = isRamel;
     }
 
-    public float getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(float id) {
+    public void setId(int id) {
         this.id = id;
     }
 
+    public ArrayList<Imagen> getListaDeImagenes() {
+        return listaDeImagenes;
+    }
+
+    public void setListaDeImagenes(JSONArray listaDeImagenes2) {
+        try {
+            for (int i = 0; i < listaDeImagenes2.length(); i++) {
+                JSONObject imagen_bus = null;
+                imagen_bus = listaDeImagenes2.getJSONObject(i);
+                listaDeImagenes.add(
+                        new Imagen(imagen_bus.getString("RUTA"), imagen_bus.getString("RUTA_EN_SERVIDOR"), imagen_bus.getString("LUGAR"))
+                );
+            }
+        } catch (JSONException e) {
+                e.printStackTrace();
+         }
+
+     }
 
 
     public String getConcesionario() {

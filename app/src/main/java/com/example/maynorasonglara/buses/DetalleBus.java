@@ -1,6 +1,7 @@
 package com.example.maynorasonglara.buses;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,15 +14,36 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.maynorasonglara.buses.controlador.BusControlador;
+import com.example.maynorasonglara.buses.datos.Bus;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +51,8 @@ import java.util.List;
 
 public class DetalleBus extends FragmentActivity {
     private DownloadImageTask task;
-    private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
-    private static final int NUM_PAGES = 5;
+    private String packagename;
+
 
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -48,8 +69,8 @@ public class DetalleBus extends FragmentActivity {
         }
 
         protected void onPostExecute(Bitmap result) {
-            //ImageView img = (ImageView) findViewById(R.id.imagenbus);
-            //img.setImageBitmap(result);
+            ImageView img = (ImageView) findViewById(R.id.imagenbus);
+            img.setImageBitmap(result);
         }
     }
 
@@ -61,115 +82,64 @@ public class DetalleBus extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_bus);
 
-        /*TextView nombre = (TextView) findViewById(R.id.nombre);
+        TextView nombre = (TextView) findViewById(R.id.nombre);
         TextView tarifa = (TextView) findViewById(R.id.tarifa);
         TextView tiempo = (TextView) findViewById(R.id.tiempo);
         TextView concesionario = (TextView) findViewById(R.id.concesionario);
 
-        nombre.setText(getIntent().getStringExtra("nombre"));
-        tiempo.setText(getIntent().getStringExtra("tiempo"));
-        tarifa.setText(getIntent().getStringExtra("tarifa"));
-        concesionario.setText(getIntent().getStringExtra("concesionario"));*/
+        nombre.setText(getIntent().getStringExtra(Bus.NOMBRE_BUS));
+        tiempo.setText(getIntent().getStringExtra(Bus.TIEMPO_BUS));
+        tarifa.setText(getIntent().getStringExtra(Bus.TARIFA_BUS));
+        concesionario.setText(getIntent().getStringExtra(Bus.CONCESIONARIO_BUS));
+        packagename=getApplicationContext().getPackageName();
 
-
-      /*  int res= getResources().getIdentifier(getIntent().getStringExtra("imagen"),"drawable",this.getPackageName());
+        /*int res= getResources().getIdentifier(getIntent().getStringExtra("imagen"),"drawable",this.getPackageName());
         ImageView imagen= (ImageView) findViewById(R.id.imagenbus);
         imagen.setImageResource(res);*/
 
-        task = (DownloadImageTask) new DownloadImageTask().execute("http://parkcinema.az/uploads/structures/movies/images/xickok_poster1_resized.jpg");//
-
-// Instantiate a ViewPager and a PagerAdapter.
-      /*  mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ScreenSlidePagerAdapter(DetalleBus.this,getIntent().getStringExtra("id"));
-        mPager.setAdapter(mPagerAdapter);*/
+        new LongOperation().execute("");
+        addClickParaImagenes();
 
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (mPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
-        } else {
-            // Otherwise, select the previous step.
-            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-        }
+    private void addClickParaImagenes() {
+        LinearLayout imagenes= (LinearLayout) findViewById(R.id.layout_imagenes);
+        imagenes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirImagenes();
+            }
+        });
+
+        ImageView imagen= (ImageView) findViewById(R.id.imagenbus);
+        imagen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirImagenes();
+            }
+        });
+
+        TextView textoimagen= (TextView) findViewById(R.id.ver_imagenes);
+        textoimagen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirImagenes();
+            }
+        });
     }
+
+    private void abrirImagenes() {
+        Intent intent = new Intent(this, ScreenSlidePagerActivity.class);
+        intent.putExtra(Bus.ID_BUS, getIntent().getStringExtra(Bus.ID_BUS));
+        startActivity(intent);
+    }
+
 
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
      */
-    private class ScreenSlidePagerAdapter extends PagerAdapter {
-
-        Context context;
-        String busid;
-        LayoutInflater inflater;
-
-        public ScreenSlidePagerAdapter(Context context, String busid) {
-            this.context = context;
-            this.busid = busid;
-        }
-
-
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == ((RelativeLayout) object);
-        }
-
-
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-
-// Declare Variables
-            TextView txtrank;
-            TextView txtcountry;
-            TextView txtpopulation;
-            ImageView imgflag;
-
-            inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View itemView = inflater.inflate(R.layout.fragment_screen_slide_page, container,
-                    false);
-
-// Locate the TextViews in viewpager_item.xml
-            txtrank = (TextView) itemView.findViewById(R.id.rank);
-            txtcountry = (TextView) itemView.findViewById(R.id.country);
-            txtpopulation = (TextView) itemView.findViewById(R.id.population);
-
-// Capture position and set to the TextViews
-            txtrank.setText("texto del rank");
-            txtcountry.setText("texto del pais");
-            txtpopulation.setText("texto de poblacion");
-
-// Locate the ImageView in viewpager_item.xml
-           // imgflag = (ImageView) itemView.findViewById(R.id.flag);
-// Capture position and set to the ImageView
-            //imgflag.setImageResource(flag[position]);
-
-// Add viewpager_item.xml to ViewPager
-            ((ViewPager) container).addView(itemView);
-
-            return itemView;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-// Remove viewpager_item.xml from ViewPager
-            ((ViewPager) container).removeView((RelativeLayout) object);
-
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -196,6 +166,55 @@ public class DetalleBus extends FragmentActivity {
     }
 
 
+
+    private class LongOperation  extends AsyncTask<String, Void, Void> {
+
+        private final HttpClient Client = new DefaultHttpClient();
+        private String Content;
+        private String Error = null;
+
+        protected void onPreExecute() {
+            // NOTE: You can call UI Element here.
+        }
+
+        // Call after onPreExecute method
+        protected Void doInBackground(String... urls) {
+            try {
+                HttpPost httppost = new HttpPost(BusControlador.BAJAR_PATH_DE_IMAGENES);
+                try{
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                    nameValuePairs.add(new BasicNameValuePair("RUTA",getIntent().getStringExtra(Bus.ID_BUS) ));
+                    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                }catch (Exception e){ }
+                ResponseHandler<String> responseHandler = new BasicResponseHandler();
+                Content = Client.execute(httppost, responseHandler);
+            } catch (ClientProtocolException e) {
+                Error = e.getMessage();
+                cancel(true);
+            } catch (IOException e) {
+                Error = e.getMessage();
+                cancel(true);
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void unused) {
+            if (Error != null) {
+                // uiUpdate.setText("Output : "+Error);
+            } else {
+                Content=Content.split("<!--")[0];
+                if(Content.contains("null")){
+                    int res= getResources().getIdentifier("busicon","drawable",packagename);
+                    ImageView imagen= (ImageView) findViewById(R.id.imagenbus);
+                    imagen.setImageResource(res);
+                }else{
+                    Bus bus=MainActivity.buscontrolador.agregarImagenABus(getIntent().getStringExtra(Bus.ID_BUS),Content);
+                    task = (DownloadImageTask) new DownloadImageTask().execute(bus.getListaDeImagenes().get(0).getRutaEnServidor());//
+                }
+            }
+        }
+
+    }
 
 
 }

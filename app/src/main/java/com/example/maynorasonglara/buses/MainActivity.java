@@ -55,7 +55,7 @@ import com.example.maynorasonglara.buses.datos.Bus;
 
 public class MainActivity extends Activity implements SearchView.OnQueryTextListener {
 
-    BusControlador buscontrolador=new BusControlador();
+    public static BusControlador buscontrolador=new BusControlador();
     private SearchView mSearchView;
     private ListView mListView;
 
@@ -87,10 +87,8 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-
-
                 Bus bus=(Bus) parent.getAdapter().getItem(position);
-                abrirBusDetallado(bus);
+                abrirImagenes(bus);
             }
         });
 
@@ -181,15 +179,27 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
 
     }
 
-    private void abrirBusDetallado(Bus bus) {
-
-        Intent intent = new Intent(this, DetalleBus.class);
-        intent.putExtra("nombre",bus.getNombre());
-        intent.putExtra("tarifa",bus.getTarifa()+"");
-        intent.putExtra("tiempo",bus.getTiempo());
-        intent.putExtra("concesionario",bus.getConcesionario());
+    private void abrirImagenes(Bus bus) {
+        Intent intent = new Intent(this, ScreenSlidePagerActivity.class);
+        intent.putExtra(Bus.ID_BUS, getIntent().getStringExtra(Bus.ID_BUS));
+        intent.putExtra(Bus.ID_BUS,bus.getId()+"");
+        intent.putExtra(Bus.NOMBRE_BUS,bus.getNombre());
+        intent.putExtra(Bus.TARIFA_BUS,bus.getTarifa()+"");
+        intent.putExtra(Bus.TIEMPO_BUS,bus.getTiempo());
+        intent.putExtra(Bus.CONCESIONARIO_BUS,bus.getConcesionario());
         startActivity(intent);
     }
+
+    /*private void abrirBusDetallado(Bus bus) {
+
+        Intent intent = new Intent(this, DetalleBus.class);
+        intent.putExtra(Bus.ID_BUS,bus.getId()+"");
+        intent.putExtra(Bus.NOMBRE_BUS,bus.getNombre());
+        intent.putExtra(Bus.TARIFA_BUS,bus.getTarifa()+"");
+        intent.putExtra(Bus.TIEMPO_BUS,bus.getTiempo());
+        intent.putExtra(Bus.CONCESIONARIO_BUS,bus.getConcesionario());
+        startActivity(intent);
+    }*/
 
 
    /* private void refrescarPantalla() {

@@ -5,7 +5,7 @@
     <string name="search_hint">Buscar Ruta por Nombre</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_detalle_bus">Detalle de Ruta</string>
-    <string name="lorem_ipsum">Calificar Servicio</string>
+    <string name="lorem_ipsum">Hola soy un texto random</string>
     <string name="title_activity_calificar">Calificar Servicio</string><string name="hint">Editor #%d</string>
 
 <!-- TODO: Remove or change this placeholder text -->

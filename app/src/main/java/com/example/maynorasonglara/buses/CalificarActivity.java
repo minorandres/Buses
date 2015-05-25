@@ -64,7 +64,7 @@ public class CalificarActivity extends ActionBarActivity {
         // Create custom dialog object
         final Dialog dialog = new Dialog(CalificarActivity.this);
         // Include dialog.xml file
-        dialog.setContentView(R.layout.dialog);
+       /* dialog.setContentView(R.layout.dialog);
         // Set dialog title
         dialog.setTitle("Gracias por su Opinion");
 
@@ -76,8 +76,7 @@ public class CalificarActivity extends ActionBarActivity {
 
         dialog.show();
 
-        Button declineButton = (Button) dialog.findViewById(R.id.declineButton);
-        // if decline button is clicked, close the custom dialog
+        Button declineButton = (Button) dialog.findViewById(R.id.declineButton);      // if decline button is clicked, close the custom dialog
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +85,7 @@ public class CalificarActivity extends ActionBarActivity {
                 finish();
             }
         });
-
+*/
 
     }
 
